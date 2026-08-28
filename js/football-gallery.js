@@ -16,12 +16,12 @@ class ContainedMemoryGlobeGallery {
     this.photos = typeof GALLERY_PHOTOS !== 'undefined' ? GALLERY_PHOTOS : [];
     this.totalPhotos = this.photos.length;
 
-    // 26 Spaced Spherical Slots
+    // 25 Generously Spaced Spherical Slots
     this.slots = [];
     this.slotElements = [];
 
     // Physics & Rotation state
-    this.rotX = -0.08;
+    this.rotX = -0.06;
     this.rotY = 0.0;
     this.vx = 0.0;
     this.vy = 0.0014;
@@ -108,13 +108,13 @@ class ContainedMemoryGlobeGallery {
 
   generateSphericalSlots() {
     this.slots = [];
-    // 5 distinct latitude rings with generous dark gaps: 3 + 6 + 8 + 6 + 3 = 26 slots
+    // 5 balanced latitude rings: 3 + 6 + 7 + 6 + 3 = 25 distinct spherical slots
     const rings = [
-      { latDeg: 54, count: 3, offsetDeg: 0 },
-      { latDeg: 27, count: 6, offsetDeg: 18 },
-      { latDeg: 0, count: 8, offsetDeg: 0 },
-      { latDeg: -27, count: 6, offsetDeg: 18 },
-      { latDeg: -54, count: 3, offsetDeg: 0 }
+      { latDeg: 50, count: 3, offsetDeg: 0 },
+      { latDeg: 25, count: 6, offsetDeg: 20 },
+      { latDeg: 0,  count: 7, offsetDeg: 0 },
+      { latDeg: -25, count: 6, offsetDeg: 20 },
+      { latDeg: -50, count: 3, offsetDeg: 60 }
     ];
 
     let slotIdx = 0;
@@ -135,6 +135,7 @@ class ContainedMemoryGlobeGallery {
           sinLat: sinLat,
           sinLon: Math.sin(lonRad),
           cosLon: Math.cos(lonRad),
+          // 1-to-1 unique mapping to the curated 25 photos
           photoIndex: slotIdx % Math.max(1, this.totalPhotos)
         });
         slotIdx++;
@@ -160,13 +161,13 @@ class ContainedMemoryGlobeGallery {
 
     const charD = Math.min(availW, availH);
 
-    // Contained globe radius: fits comfortably inside viewport without edge clipping
+    // Contained globe radius: comfortable negative space between 25 cards
     const baseR = isMobile
-      ? Math.max(90, Math.min(135, charD * 0.38))
-      : Math.max(120, Math.min(220, charD * 0.38));
+      ? Math.max(95, Math.min(145, charD * 0.40))
+      : Math.max(130, Math.min(235, charD * 0.40));
 
     const Rx = baseR;
-    const Ry = baseR * 1.04;
+    const Ry = baseR * 1.05;
     const Rz = baseR;
 
     const fragment = document.createDocumentFragment();
@@ -191,8 +192,8 @@ class ContainedMemoryGlobeGallery {
 
       const img = document.createElement('img');
       img.src = photo.thumb;
-      img.alt = 'Sports Memory';
-      img.loading = i < 12 ? 'eager' : 'lazy';
+      img.alt = `Sports Memory ${i + 1}`;
+      img.loading = 'eager';
 
       card.appendChild(img);
       fragment.appendChild(card);
@@ -327,8 +328,6 @@ class ContainedMemoryGlobeGallery {
   }
 
   startAnimationLoop() {
-    let lastRecycleAngle = 0;
-
     const render = () => {
       if (!this.isFocused && !this.reducedMotion) {
         if (!this.isDragging) {
@@ -348,37 +347,12 @@ class ContainedMemoryGlobeGallery {
             this.world.style.transform = `rotateX(${this.rotX.toFixed(4)}rad) rotateY(${this.rotY.toFixed(4)}rad)`;
           }
         }
-
-        // Virtualized Progressive Slot Recycling:
-        if (Math.abs(this.rotY - lastRecycleAngle) > 0.35) {
-          lastRecycleAngle = this.rotY;
-          this.recycleBackFacingSlots();
-        }
       }
 
       requestAnimationFrame(render);
     };
 
     requestAnimationFrame(render);
-  }
-
-  recycleBackFacingSlots() {
-    if (this.totalPhotos <= 26) return;
-
-    // Identify which slots are currently in the back half of the 3D sphere
-    this.slotElements.forEach(({ slot, img }) => {
-      const currentLon = slot.lonRad + this.rotY;
-      const worldZ = Math.cos(currentLon) * slot.cosLat;
-
-      // If slot is facing away in the dark back region (Z < -0.45), refresh with new unique photo!
-      if (worldZ < -0.45) {
-        slot.photoIndex = (slot.photoIndex + 26) % this.totalPhotos;
-        const newPhoto = this.photos[slot.photoIndex];
-        if (newPhoto && img.src !== newPhoto.thumb) {
-          img.src = newPhoto.thumb;
-        }
-      }
-    });
   }
 }
 
