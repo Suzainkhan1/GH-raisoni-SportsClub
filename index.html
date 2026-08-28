@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>GHRSTU Sports Club — Enter The Games | Official Arena</title>
+  <meta name="description" content="Official GHRSTU Sports Club digital arena. Experience continuous cinematic stadium scroll, upcoming tournament scoreboards, live countdowns, leadership, and athletic galleries." />
+  <meta name="robots" content="index, follow" />
+  <meta name="theme-color" content="#020509" />
+  <link rel="icon" type="image/png" href="assets/logos/sports_club_logo.png" />
+  
+  <!-- Modern Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Teko:wght@500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  
+  <!-- Stadium Theme Stylesheet -->
+  <link rel="stylesheet" href="css/stadium.css" />
+</head>
+<body>
+
+  <!-- ========================================================================
+       1. PROCEDURAL STADIUM BACKGROUND & SPOTLIGHTS + CINEMATIC VIDEO LAYER
+       ======================================================================== -->
+  <div class="stadium-stage" aria-hidden="true">
+    <!-- Cinematic Background Video Layer (Landing Page Atmosphere) -->
+    <div id="stadiumVideoContainer" class="stadium-video-layer">
+      <video id="landingBgVideo" class="stadium-bg-video" src="videos/stadium_bg.mp4" autoplay muted loop playsinline preload="auto">
+        <source src="videos/stadium_bg.mp4" type="video/mp4" />
+      </video>
+      <div class="stadium-video-overlay"></div>
+    </div>
+    <canvas id="stadiumCanvas" class="stadium-canvas"></canvas>
+    <div class="stadium-floodlights"></div>
+    <div id="stadiumSpotlightBeam" class="stadium-spotlight-beam"></div>
+    <div class="stadium-haze"></div>
+    <div class="stadium-grid"></div>
+  </div>
+
+  <!-- Scroll Progress Bar -->
+  <div class="stadium-scroll-progress">
+    <div id="scrollProgressBar" class="scroll-progress-bar"></div>
+  </div>
+
+  <!-- ========================================================================
+       2. PERSISTENT HEADER GLASS DOCK FRAME (Fades in when logos dock)
+       ======================================================================== -->
+  <header id="stadiumHeader" class="stadium-header"></header>
+
+  <!-- ========================================================================
+       3. FLYING ANIMATED LOGO LAYER (STRICTLY SCROLL-SCRUBBED)
+       ======================================================================== -->
+  <div class="flying-logo-layer" aria-hidden="true">
+    <!-- Sports Club Crest (starts huge in center -> flies to top-center) -->
+    <div id="scrubSportsLogo" class="scrub-logo-item">
+      <div class="sports-logo-halo"></div>
+      <img src="assets/logos/sports_club_logo.png" alt="GHRSTU Sports Club Crest" />
+    </div>
+
+    <!-- Sadabai Raisoni Logo (starts on right -> flies to top-right) -->
+    <div id="scrubSadabaiLogo" class="scrub-logo-item">
+      <div class="logo-badge-col" style="text-align: right;">
+        <span class="logo-inst-title">SADABAI RAISONI</span>
+        <span class="logo-inst-subtitle">Women's College</span>
+      </div>
+      <img src="assets/logos/sadabai_raisoni_logo.png" alt="Sadabai Raisoni Logo" />
+    </div>
+
+    <!-- GHRSTU Logo (starts on left -> flies to top-left) -->
+    <div id="scrubGhrstuLogo" class="scrub-logo-item">
+      <img src="assets/logos/ghrstu_logo.png" alt="GHRSTU Logo" />
+      <div class="logo-badge-col">
+        <span class="logo-inst-title">GHRSTU</span>
+        <span class="logo-inst-subtitle">Skill Tech Univ</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       4. MAIN CINEMATIC SCROLL EXPERIENCE
+       ======================================================================== -->
+  <main class="cinematic-main">
+
+    <!-- ====================================================================
+         SCENE 01: EXTENDED OPENING CHOREOGRAPHY TRACK (360vh)
+         ==================================================================== -->
+    <section id="hero" class="scroll-opening-track">
+      <div class="sticky-opening-viewport">
+        <!-- Hero introductory text overlay -->
+        <div id="heroIntroCopy" class="hero-intro-overlay">
+          <div class="hero-eyebrow">
+            G.H. Raisoni Skill Tech University
+          </div>
+
+          <h1 class="hero-title">
+            ENTER THE GAMES
+          </h1>
+
+          <p class="hero-sub">
+            Step into the varsity digital arena. Experience continuous cinematic stadium travel, official scoreboards, and athletic glory.
+          </p>
+
+          <div class="scroll-indicator">
+            <span>SCROLL TO ENTER</span>
+            <div class="scroll-arrow-box">
+              <div class="scroll-arrow-dot"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         SCENE 02: SINGLE UNIFIED BROADCAST SPORTS SCOREBOARD
+         ==================================================================== -->
+    <section id="events" class="scene-wrapper">
+      <div class="scene-inner">
+        <div class="section-head">
+          <span class="section-eyebrow">LIVE BROADCAST SCHEDULE</span>
+          <h2 class="section-title">GHRSTU SPORTS SCOREBOARD</h2>
+          <p class="section-desc">
+            Official central scoreboard for all varsity tournaments and championships. Select an event below to update the board in real time.
+          </p>
+        </div>
+
+        <!-- The One Single Unified Scoreboard Unit -->
+        <div id="singleScoreboardUnit" class="single-scoreboard-unit">
+          <!-- Top Broadcast Banner -->
+          <div class="scoreboard-top-banner">
+            <div class="broadcast-brand">
+              <span class="live-indicator-dot"></span>
+              <span class="broadcast-channel-name">GHRSTU SPORTS BROADCAST</span>
+            </div>
+            <div class="scoreboard-status-pill">
+              <i class="fa-solid fa-satellite-dish" style="margin-right: 5px;"></i> OFFICIAL ARENA FEED
+            </div>
+          </div>
+
+          <!-- Inside Scoreboard: Event Details + Single Countdown Timer -->
+          <div class="scoreboard-interior">
+            <div class="scoreboard-main-grid">
+              
+              <!-- Left: Event Information Pane (transitions in-place) -->
+              <div class="event-info-pane">
+                <div id="eventInfoContent" class="event-info-content">
+                  <div id="singleEventBadge" class="event-badge flagship">
+                    Flagship Festival
+                  </div>
+                  <h3 id="singleEventTitle" class="event-headline">
+                    National Sports Day (Annual Sport Day)
+                  </h3>
+                  <div class="event-metadata-list">
+                    <div class="meta-item">
+                      <i class="fa-regular fa-calendar"></i>
+                      <span id="singleEventDate">29-08-2026 to 01-09-2026</span>
+                    </div>
+                    <div class="meta-item">
+                      <i class="fa-solid fa-location-dot"></i>
+                      <span id="singleEventLocation">GHRSTU Stadium & Arenas</span>
+                    </div>
+                  </div>
+                  <p id="singleEventDesc" class="event-description-text">
+                    The premier multi-day annual athletic spectacle honouring National Sports Day.
+                  </p>
+
+                  <div class="scoreboard-ctrl-row">
+                    <button id="btnPrevEvent" class="btn-ctrl" aria-label="Previous Event">
+                      <i class="fa-solid fa-chevron-left"></i> PREV
+                    </button>
+                    <button id="btnNextEvent" class="btn-ctrl" aria-label="Next Event">
+                      NEXT <i class="fa-solid fa-chevron-right"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Right: Single Active Countdown Timer -->
+              <div class="scoreboard-timer-unit">
+                <div class="timer-box-title">
+                  <i class="fa-solid fa-stopwatch"></i>
+                  <span>MATCH COUNTDOWN</span>
+                </div>
+
+                <!-- Custom state (Completed or Live) -->
+                <div id="timerCustomState" class="timer-custom-state">
+                  EVENT COMPLETED
+                </div>
+
+                <!-- Dynamic Digits Grid -->
+                <div id="timerDigitsContainer" class="timer-digits-container">
+                  <div class="timer-col">
+                    <div class="timer-digit-card">
+                      <span id="sbTimerDays" class="timer-val">00</span>
+                    </div>
+                    <span class="timer-label">DAYS</span>
+                  </div>
+
+                  <div class="timer-col">
+                    <div class="timer-digit-card">
+                      <span id="sbTimerHours" class="timer-val">00</span>
+                    </div>
+                    <span class="timer-label">HOURS</span>
+                  </div>
+
+                  <div class="timer-col">
+                    <div class="timer-digit-card">
+                      <span id="sbTimerMins" class="timer-val">00</span>
+                    </div>
+                    <span class="timer-label">MINS</span>
+                  </div>
+
+                  <div class="timer-col">
+                    <div class="timer-digit-card">
+                      <span id="sbTimerSecs" class="timer-val">00</span>
+                    </div>
+                    <span class="timer-label">SECS</span>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Bottom: Horizontal Event Selector Tray (Selector ONLY) -->
+          <div class="scoreboard-selector-tray">
+            <div class="selector-tray-header">
+              <span class="selector-tray-label"><i class="fa-solid fa-layer-group" style="color: var(--sports-green); margin-right: 6px;"></i> SELECT EVENT TO FOCUS SCOREBOARD</span>
+              <span style="font-size: 0.72rem; color: var(--text-muted);"><i class="fa-solid fa-arrows-left-right"></i> Scroll items</span>
+            </div>
+            <div id="eventsSelectorTrack" class="events-selector-track">
+              <!-- Rendered dynamically by scoreboard.js -->
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         SCENE 03: LEADERSHIP
+         ==================================================================== -->
+    <section id="leadership" class="scene-wrapper">
+      <div class="scene-inner">
+        <div class="section-head">
+          <span class="section-eyebrow">PILLARS OF EXCELLENCE</span>
+          <h2 class="section-title">OUR LEADERSHIP</h2>
+          <p class="section-desc">
+            Visionary leadership fostering physical discipline, sportsmanship, and athletic prowess.
+          </p>
+        </div>
+
+        <div class="leadership-grid">
+          <!-- Leader 1: Dr. Amina Vali -->
+          <div class="leader-card">
+            <div class="leader-img-wrapper">
+              <img src="assets/leadership/Dr_Amina_Vali_Principal.jpeg" alt="Dr. Amina Vali - Principal" class="leader-photo" />
+              <div class="leader-overlay-gradient"></div>
+              <div class="leader-badge-pill">
+                <i class="fa-solid fa-award"></i> University Leadership
+              </div>
+            </div>
+            <div class="leader-content">
+              <h3 class="leader-name">Dr. Amina Vali</h3>
+              <div class="leader-role">Principal</div>
+              <p class="leader-quote">
+                "Sports instill resilience, integrity, and lifelong leadership. We empower our students to achieve athletic excellence alongside academic brilliance."
+              </p>
+            </div>
+          </div>
+
+          <!-- Leader 2: Lekha Thawkar -->
+          <div class="leader-card">
+            <div class="leader-img-wrapper">
+              <img src="assets/leadership/Lekha_Thawkar_Club_Incharge.jpeg" alt="Lekha Thawkar - Club Incharge" class="leader-photo" />
+              <div class="leader-overlay-gradient"></div>
+              <div class="leader-badge-pill">
+                <i class="fa-solid fa-whistle"></i> Club Operations
+              </div>
+            </div>
+            <div class="leader-content">
+              <h3 class="leader-name">Lekha Thawkar</h3>
+              <div class="leader-role">Club Incharge</div>
+              <p class="leader-quote">
+                "Our mission is to create a dynamic environment where every passion finds an arena, driving teamwork, dedication, and championship victories."
+              </p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+
+
+    <!-- ====================================================================
+         SCENE 05: SPORTS CLUB MEMBERS & ATHLETE LINEUP
+         ==================================================================== -->
+    <section id="members" class="scene-wrapper">
+      <div class="scene-inner">
+        <div class="section-head">
+          <span class="section-eyebrow">THE TEAM ON THE FIELD</span>
+          <h2 class="section-title">SPORTS CLUB LINEUP</h2>
+          <p class="section-desc">
+            The dedicated athlete council and coordinators driving university tournaments, coaching, and event logistics.
+          </p>
+        </div>
+
+        <div class="members-roster-grid">
+          <!-- Member 1 -->
+          <div class="member-card">
+            <div class="member-avatar-box">
+              <i class="fa-solid fa-person-running"></i>
+            </div>
+            <h3 class="member-name">President</h3>
+            <div class="member-role">Sports Council</div>
+            <p class="member-desc">Directs tournament scheduling, varsity inter-college delegations, and athletic operations.</p>
+          </div>
+
+          <!-- Member 2 -->
+          <div class="member-card">
+            <div class="member-avatar-box">
+              <i class="fa-solid fa-baseball-bat-ball"></i>
+            </div>
+            <h3 class="member-name">Vice President</h3>
+            <div class="member-role">Field Logistics</div>
+            <p class="member-desc">Oversees stadium equipment, referee coordination, and ground management.</p>
+          </div>
+
+          <!-- Member 3 -->
+          <div class="member-card">
+            <div class="member-avatar-box">
+              <i class="fa-solid fa-medal"></i>
+            </div>
+            <h3 class="member-name">General Secretary</h3>
+            <div class="member-role">Administration</div>
+            <p class="member-desc">Coordinates participant registrations, scoring systems, and certificate awards.</p>
+          </div>
+
+          <!-- Member 4 -->
+          <div class="member-card">
+            <div class="member-avatar-box">
+              <i class="fa-solid fa-gamepad"></i>
+            </div>
+            <h3 class="member-name">E-Sports Lead</h3>
+            <div class="member-role">Digital Arena</div>
+            <p class="member-desc">Organizes digital sports, Free Fire, Mobile Legends, and virtual competitions.</p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ========================================================================
+       5. PERSISTENT LIQUID GLASS BOTTOM NAVIGATION DOCK (5 ITEMS)
+       ======================================================================== -->
+  <div id="bottomNavDock" class="bottom-dock-container">
+    <nav class="liquid-glass-dock" aria-label="Quick Section Navigation">
+      <a href="#hero" class="dock-nav-item active" aria-label="Home Arena">
+        <i class="fa-solid fa-house"></i>
+        <span>Home</span>
+      </a>
+      <a href="#events" class="dock-nav-item" aria-label="Scoreboard">
+        <i class="fa-solid fa-calendar-days"></i>
+        <span>Events</span>
+      </a>
+      <a href="#leadership" class="dock-nav-item" aria-label="Leadership">
+        <i class="fa-solid fa-user-tie"></i>
+        <span>Leaders</span>
+      </a>
+      <a href="gallery.html" class="dock-nav-item" aria-label="Photo Gallery">
+        <i class="fa-solid fa-camera-retro"></i>
+        <span>Gallery</span>
+      </a>
+      <a href="#members" class="dock-nav-item" aria-label="Team Roster">
+        <i class="fa-solid fa-users"></i>
+        <span>Team</span>
+      </a>
+    </nav>
+  </div>
+
+  <!-- ========================================================================
+       6. PROFESSIONAL CONTACT FOOTER (STADIUM EXIT)
+       ======================================================================== -->
+  <footer class="stadium-footer" id="contact">
+    <div class="footer-inner-container">
+
+      <!-- Top Grid: Brand | Navigation | Contact -->
+      <div class="footer-main-grid">
+
+        <!-- Col 1: Identity & Mission -->
+        <div class="footer-col brand-col">
+          <div class="footer-brand-header">
+            <img src="assets/logos/sports_club_logo.png" alt="Sports Club Crest" class="footer-crest-icon" />
+            <div>
+              <h3 class="footer-brand-title">GHRSTU SPORTS CLUB</h3>
+              <p class="footer-motto">Sports · Competition · Teamwork · Excellence</p>
+            </div>
+          </div>
+          <p class="footer-brand-desc">
+            The official athletic gateway of G.H. Raisoni Skill Tech University. Fostering discipline, sportsmanship, competitive spirit, and championship excellence.
+          </p>
+          <div class="footer-partner-logos">
+            <img src="assets/logos/ghrstu_logo.png" alt="GHRSTU Logo" class="footer-partner-img" />
+            <img src="assets/logos/sadabai_raisoni_logo.png" alt="Sadabai Raisoni Logo" class="footer-partner-img" />
+          </div>
+        </div>
+
+        <!-- Col 2: Quick Links -->
+        <div class="footer-col links-col">
+          <h4 class="footer-section-heading"><i class="fa-solid fa-compass" style="color: var(--sports-green); margin-right: 8px;"></i> QUICK NAVIGATION</h4>
+          <ul class="footer-links-list">
+            <li><a href="#hero" class="footer-link"><i class="fa-solid fa-angle-right"></i> Home Arena</a></li>
+            <li><a href="#events" class="footer-link"><i class="fa-solid fa-angle-right"></i> Events &amp; Scoreboard</a></li>
+            <li><a href="#leadership" class="footer-link"><i class="fa-solid fa-angle-right"></i> Leadership</a></li>
+            <li><a href="gallery.html" class="footer-link"><i class="fa-solid fa-angle-right"></i> 3D Memory Gallery</a></li>
+            <li><a href="#members" class="footer-link"><i class="fa-solid fa-angle-right"></i> Sports Club Team</a></li>
+          </ul>
+        </div>
+
+        <!-- Col 3: Contact & Campus -->
+        <div class="footer-col contact-col">
+          <h4 class="footer-section-heading"><i class="fa-solid fa-location-dot" style="color: var(--sports-green); margin-right: 8px;"></i> CONTACT &amp; CAMPUS</h4>
+          <div class="footer-contact-items">
+
+            <!-- Sports Incharge -->
+            <div class="contact-entry">
+              <i class="fa-solid fa-person-chalkboard contact-icon"></i>
+              <div>
+                <strong>Sports Incharge</strong>
+                <p>Lekha Thawkar</p>
+                <p><a href="mailto:lekha.thawkar@gmail.com" class="footer-contact-link">lekha.thawkar@gmail.com</a></p>
+              </div>
+            </div>
+
+            <!-- Location -->
+            <div class="contact-entry">
+              <i class="fa-solid fa-map-pin contact-icon"></i>
+              <div>
+                <strong>Campus Location</strong>
+                <p>
+                  <a href="https://www.google.com/maps/search/?api=1&query=G.H.+Raisoni+Skill+Tech+University+Riaan+Tower+Sadar+Nagpur+440001" target="_blank" rel="noopener noreferrer" class="footer-contact-link footer-location-link">
+                    G.H. Raisoni Skill Tech University<br>
+                    Riaan Tower, Rangilal Marg,<br>
+                    Near Mangalwari Bazaar, Sadar,<br>
+                    Nagpur – 440001
+                  </a>
+                </p>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Divider -->
+      <div class="footer-divider"></div>
+
+      <!-- Bottom Bar: Credit + Copyright -->
+      <div class="footer-bottom-bar">
+        <div class="copyright-text">
+          &copy; 2026 GHRSTU Sports Club. All Rights Reserved.
+        </div>
+        <div class="footer-credit-block">
+          <span class="footer-credit-label">Original Website Credit</span>
+          <a href="mailto:Yugantraginwar@gmail.com" class="footer-credit-email">Yugantraginwar@gmail.com</a>
+        </div>
+      </div>
+
+    </div>
+  </footer>
+
+  <!-- ========================================================================
+       8. SCRIPTS
+       ======================================================================== -->
+  <script src="js/scoreboard.js"></script>
+  <script src="js/lets-scroll-stadium.js"></script>
+
+</body>
+</html>

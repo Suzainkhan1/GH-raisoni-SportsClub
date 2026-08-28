@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>GHRSTU Sports Club — 3D Memory Arena Gallery</title>
+  <meta name="description" content="Interactive 3D Football Gallery featuring all 316 unique moments and tournament memories of GHRSTU Sports Club." />
+  <meta name="robots" content="index, follow" />
+  <meta name="theme-color" content="#020509" />
+  <link rel="icon" type="image/png" href="assets/logos/sports_club_logo.png" />
+
+  <!-- Google Fonts & Font Awesome Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800;900&family=Teko:wght@500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+  <!-- Gallery Stylesheet -->
+  <link rel="stylesheet" href="css/gallery.css" />
+</head>
+<body>
+
+  <!-- ====================================================================
+       LOADING SCREEN
+       ==================================================================== -->
+  <div id="galleryLoadingScreen" class="gallery-loading-screen">
+    <img src="assets/logos/sports_club_logo.png" alt="Sports Club Crest" class="loader-logo-icon" />
+    <h2 class="loader-title">SPORTS CLUB ARENA</h2>
+    <div class="loader-subtitle">Loading Memories Sphere...</div>
+    <div class="loader-progress-bar-track">
+      <div id="loaderProgressBar" class="loader-progress-bar-fill"></div>
+    </div>
+  </div>
+
+  <!-- ====================================================================
+       PERSISTENT SHARED HEADER (RESPONSIVE & MOBILE-SAFE)
+       ==================================================================== -->
+  <header id="stadiumHeader" class="stadium-header">
+    <!-- Left: GHRSTU Logo -->
+    <a href="index.html" class="header-logo-link left" aria-label="GHRSTU Official Website">
+      <img src="assets/logos/ghrstu_logo.png" alt="GHRSTU Logo" />
+      <div class="logo-badge-col">
+        <span class="logo-inst-title">GHRSTU</span>
+        <span class="logo-inst-subtitle">Skill Tech Univ</span>
+      </div>
+    </a>
+
+    <!-- Center: Sports Club Crest -->
+    <a href="index.html" class="header-logo-link center" aria-label="GHRSTU Sports Club Home">
+      <img src="assets/logos/sports_club_logo.png" alt="Sports Club Crest" />
+    </a>
+
+    <!-- Right: Sadabai Raisoni Logo -->
+    <a href="index.html" class="header-logo-link right" aria-label="Sadabai Raisoni Women's College">
+      <div class="logo-badge-col" style="text-align: right;">
+        <span class="logo-inst-title">SADABAI RAISONI</span>
+        <span class="logo-inst-subtitle">Women's College</span>
+      </div>
+      <img src="assets/logos/sadabai_raisoni_logo.png" alt="Sadabai Raisoni Logo" />
+    </a>
+  </header>
+
+  <!-- ====================================================================
+       ATMOSPHERIC STADIUM STAGE BACKGROUND
+       ==================================================================== -->
+  <div class="gallery-stage-bg">
+    <canvas id="galleryParticlesCanvas" class="gallery-canvas-particles"></canvas>
+    <div class="gallery-floodlights"></div>
+    <div class="gallery-spotlight-core"></div>
+  </div>
+
+  <!-- ====================================================================
+       TITLE OVERLAY
+       ==================================================================== -->
+  <div class="gallery-title-banner">
+    <div class="gallery-eyebrow">
+      <span>CHAMPIONSHIP VAULT</span>
+    </div>
+    <h1 class="gallery-headline">THE ARENA IN ACTION</h1>
+    <div class="gallery-hint-pill">
+      <i class="fa-solid fa-arrows-up-down-left-right"></i>
+      <span>Drag or swipe to rotate sphere • Tap to inspect</span>
+    </div>
+  </div>
+
+  <!-- ====================================================================
+       3D FOOTBALL SPHEROID VIEWPORT
+       ==================================================================== -->
+  <main id="footballViewport" class="football-viewport" aria-label="3D Football Gallery Sphere">
+    <div id="footballWorld" class="football-spheroid-world">
+      <!-- 316 unique memory cards populated dynamically by football-gallery.js -->
+    </div>
+  </main>
+
+  <!-- ====================================================================
+       IMAGE FOCUS ZOOM MODAL
+       ==================================================================== -->
+  <div id="photoFocusOverlay" class="photo-focus-overlay" aria-modal="true" role="dialog">
+    <div class="focus-card-wrapper">
+      <button id="focusCloseBtn" class="focus-close-btn" aria-label="Close photograph">
+        <i class="fa-solid fa-xmark"></i>
+        <span>CLOSE</span>
+      </button>
+      <img id="focusedHighResImg" src="" alt="Enlarged Tournament Memory" class="focused-highres-img" />
+    </div>
+  </div>
+
+  <!-- ====================================================================
+       PERSISTENT LIQUID GLASS BOTTOM NAVIGATION DOCK
+       ==================================================================== -->
+  <div class="bottom-dock-container">
+    <nav class="liquid-glass-dock" aria-label="Main Navigation">
+      <a href="index.html" class="dock-nav-item">
+        <i class="fa-solid fa-house"></i>
+        <span>Home</span>
+      </a>
+      <a href="index.html#events" class="dock-nav-item">
+        <i class="fa-solid fa-trophy"></i>
+        <span>Events</span>
+      </a>
+      <a href="index.html#leadership" class="dock-nav-item">
+        <i class="fa-solid fa-user-tie"></i>
+        <span>Leaders</span>
+      </a>
+      <a href="gallery.html" class="dock-nav-item active">
+        <i class="fa-solid fa-camera-retro"></i>
+        <span>Gallery</span>
+      </a>
+      <a href="index.html#members" class="dock-nav-item">
+        <i class="fa-solid fa-users"></i>
+        <span>Team</span>
+      </a>
+    </nav>
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/gallery-data.js"></script>
+  <script src="js/football-gallery.js"></script>
+</body>
+</html>

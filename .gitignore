@@ -1,0 +1,26 @@
+# ============================================================
+# GHRSTU Sports Club — .gitignore
+# ============================================================
+
+# Source photos (not used by production — optimized webp in assets/gallery_3d/)
+gallery_images/
+assets/gallery/
+Main_images/
+logo images/
+
+# Duplicate / stale video (production uses videos/stadium_bg.mp4)
+videos/Stadium_searchlights_sweep_throu*
+
+# Development tooling
+.agents/
+lets-scroll-main/
+
+# OS / IDE
+.DS_Store
+Thumbs.db
+*.swp
+.vscode/
+.idea/
+
+# Node (if ever added)
+node_modules/
