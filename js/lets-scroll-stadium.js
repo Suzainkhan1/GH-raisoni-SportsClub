@@ -25,10 +25,26 @@ class LetsScrollStadiumEngine {
     this.videoContainer = document.getElementById('stadiumVideoContainer');
     this.bgVideo = document.getElementById('landingBgVideo');
 
+    this.initScrollRestoration();
     this.initVideo();
     this.initCanvas();
     this.bindEvents();
     this.startScrubLoop();
+  }
+
+  initScrollRestoration() {
+    if ('scrollRestoration' in history) {
+      history.scrollRestoration = 'manual';
+    }
+    const hash = window.location.hash;
+    if (!hash || hash === '#' || hash === '#hero' || hash === '#index') {
+      window.scrollTo(0, 0);
+    } else {
+      const target = document.querySelector(hash);
+      if (target) {
+        setTimeout(() => target.scrollIntoView({ behavior: 'smooth' }), 60);
+      }
+    }
   }
 
   initVideo() {

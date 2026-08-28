@@ -271,8 +271,11 @@ class SingleScoreboardManager {
     const allItems = this.dom.track.querySelectorAll('.event-selector-item');
     allItems.forEach((el, i) => {
       el.classList.toggle('active', i === index);
-      if (i === index) {
-        el.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+      if (i === index && animated && this.dom.track) {
+        // Scroll only within the horizontal selector track, NEVER the main window
+        const track = this.dom.track;
+        const targetLeft = el.offsetLeft - (track.clientWidth / 2) + (el.clientWidth / 2);
+        track.scrollTo({ left: Math.max(0, targetLeft), behavior: 'smooth' });
       }
     });
 
