@@ -265,7 +265,7 @@ html, body {
   display: flex;
   align-items: center;
   justify-content: center;
-  perspective: 900px;
+  perspective: 1100px;
   overflow: hidden;
   cursor: grab;
   z-index: 5;
@@ -283,40 +283,64 @@ html, body {
   will-change: transform;
 }
 
-/* Individual Spaced Memory Photograph Cards */
+/* Individual Spaced Memory Photograph Cards:
+   Parent holds pure 3D spherical position & orientation.
+   preserve-3d is CRITICAL: the card's surface-normal rotation must compose
+   with the world rotation in full 3D space. Without it, CSS flattens each
+   card independently, destroying the spherical structure from side views.
+   NEVER apply transform to .memory-photo-card on hover! */
 .memory-photo-card {
   position: absolute;
-  top: -36px;
-  left: -52px;
-  width: 105px;
-  height: 72px;
-  border-radius: 8px;
-  overflow: hidden;
-  background: #08101a;
-  border: 1px solid rgba(255, 255, 255, 0.22);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.8), 0 0 12px rgba(0, 230, 118, 0.08);
+  top: -31px;
+  left: -45px;
+  width: 90px;
+  height: 62px;
   transform-style: preserve-3d;
-  will-change: transform, opacity;
+  will-change: transform;
   cursor: pointer;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
+  pointer-events: auto;
+  backface-visibility: visible;
+  -webkit-backface-visibility: visible;
+  z-index: 10;
 }
 
-.memory-photo-card:hover {
-  border-color: var(--sports-green);
-  box-shadow: 0 12px 35px rgba(0, 230, 118, 0.5);
-  transform: scale(1.12) !important;
-  z-index: 80;
+/* Child element handles ALL visual appearance, border, glow, and hover scale */
+.memory-card-inner {
+  width: 100%;
+  height: 100%;
+  border-radius: 7px;
+  overflow: hidden;
+  background: #03140e;
+  border: 1px solid rgba(0, 255, 178, 0.45);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.85), 0 0 10px rgba(0, 255, 178, 0.20);
+  transform-origin: center center;
+  transition: border-color 0.25s ease,
+              box-shadow 0.25s ease,
+              filter 0.25s ease;
+  will-change: transform, box-shadow, border-color;
+  pointer-events: none;
 }
 
-.memory-photo-card img {
+.memory-card-inner img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
   pointer-events: none;
   user-select: none;
+  -webkit-user-drag: none;
+}
+
+/* Visual-only hover effect on child element - parent spherical coordinates remain 100% rock solid */
+.memory-photo-card:hover {
+  z-index: 120 !important;
+}
+
+.memory-photo-card:hover .memory-card-inner {
+  border-color: #00ffb2;
+  box-shadow: 0 8px 24px rgba(0, 255, 178, 0.65), 0 0 20px rgba(0, 255, 178, 0.50);
+  transform: scale(1.12);
+  filter: brightness(1.15) !important;
 }
 
 @media (max-width: 768px) {
@@ -324,10 +348,12 @@ html, body {
     bottom: 5rem;
   }
   .memory-photo-card {
-    top: -24px;
-    left: -34px;
-    width: 68px;
-    height: 48px;
+    top: -21px;
+    left: -30px;
+    width: 60px;
+    height: 42px;
+  }
+  .memory-card-inner {
     border-radius: 6px;
   }
 }
