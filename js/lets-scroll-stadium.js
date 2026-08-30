@@ -165,8 +165,8 @@ class LetsScrollStadiumEngine {
 
     // Safe header left and right dock positions without clipping
     const headerSportsX = centerX;
-    const headerLeftX = isMobile ? 48 : (vw > 1200 ? (vw - 1100) / 2 + 130 : 160);
-    const headerRightX = isMobile ? vw - 48 : (vw > 1200 ? vw - (vw - 1100) / 2 - 130 : vw - 160);
+    const headerLeftX = isMobile ? 40 : (vw > 1200 ? (vw - 1100) / 2 + 50 : 60);
+    const headerRightX = isMobile ? vw - 40 : (vw > 1200 ? vw - (vw - 1100) / 2 - 50 : vw - 60);
 
     // Background Video Layer:
     // Stay fully visible through the ENTIRE cinematic logo sequence (0 → 4.2vh).
@@ -198,10 +198,10 @@ class LetsScrollStadiumEngine {
       this.heroCopy.style.pointerEvents = copyOpacity > 0.5 ? 'auto' : 'none';
     }
 
-    // Sports Club Logo: from large (280px / scale 1.0) to header badge (scale 0.18 on mobile, 0.20 on desktop)
+    // Sports Club Logo: from large (280px / scale 1.0) to header badge (scale 0.17 on mobile, 0.18 on desktop)
     let sportsX = centerX;
     let sportsY = startCenterY + (headerY - startCenterY) * ease1;
-    let targetSportsScale = isMobile ? 0.17 : 0.20;
+    let targetSportsScale = isMobile ? 0.17 : 0.18;
     let sportsScale = 1.0 - (1.0 - targetSportsScale) * ease1;
 
     if (this.logoSports) {
@@ -251,7 +251,7 @@ class LetsScrollStadiumEngine {
     } else {
       let sadaX = centerX + (headerRightX - centerX) * ease2;
       let sadaY = startCenterY + (headerY - startCenterY) * ease2;
-      let targetSadaScale = isMobile ? 0.35 : 0.46;
+      let targetSadaScale = isMobile ? 0.40 : 0.38;
       let sadaScale = 1.0 - (1.0 - targetSadaScale) * ease2;
       let sadaOpacity = Math.max(0, Math.min(1, t2Raw * 2.5));
 
@@ -281,7 +281,7 @@ class LetsScrollStadiumEngine {
     } else {
       let ghrX = centerX + (headerLeftX - centerX) * ease3;
       let ghrY = startCenterY + (headerY - startCenterY) * ease3;
-      let targetGhrScale = isMobile ? 0.35 : 0.46;
+      let targetGhrScale = isMobile ? 0.40 : 0.38;
       let ghrScale = 1.0 - (1.0 - targetGhrScale) * ease3;
       let ghrOpacity = Math.max(0, Math.min(1, t3Raw * 2.5));
 
