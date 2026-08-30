@@ -285,22 +285,23 @@ html, body {
 
 /* Individual Spaced Memory Photograph Cards:
    Parent holds pure 3D spherical position & orientation.
-   preserve-3d is CRITICAL: the card's surface-normal rotation must compose
-   with the world rotation in full 3D space. Without it, CSS flattens each
-   card independently, destroying the spherical structure from side views.
+   preserve-3d is CRITICAL: the card's surface-normal rotation composes
+   with the world rotation in full 3D space.
+   backface-visibility: hidden ensures only the front hemisphere is visible,
+   matching the reference image perfectly without internal clutter.
    NEVER apply transform to .memory-photo-card on hover! */
 .memory-photo-card {
   position: absolute;
-  top: -31px;
-  left: -45px;
-  width: 90px;
-  height: 62px;
+  top: -36px;
+  left: -52px;
+  width: 105px;
+  height: 72px;
   transform-style: preserve-3d;
   will-change: transform;
   cursor: pointer;
   pointer-events: auto;
-  backface-visibility: visible;
-  -webkit-backface-visibility: visible;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
   z-index: 10;
 }
 
@@ -308,17 +309,20 @@ html, body {
 .memory-card-inner {
   width: 100%;
   height: 100%;
-  border-radius: 7px;
+  border-radius: 8px;
   overflow: hidden;
-  background: #03140e;
-  border: 1px solid rgba(0, 255, 178, 0.45);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.85), 0 0 10px rgba(0, 255, 178, 0.20);
+  background: #08101a;
+  border: 1px solid rgba(0, 230, 118, 0.45);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.85), 0 0 12px rgba(0, 230, 118, 0.18);
   transform-origin: center center;
   transition: border-color 0.25s ease,
               box-shadow 0.25s ease,
+              transform 0.25s ease,
               filter 0.25s ease;
   will-change: transform, box-shadow, border-color;
   pointer-events: none;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
 }
 
 .memory-card-inner img {
@@ -338,8 +342,8 @@ html, body {
 
 .memory-photo-card:hover .memory-card-inner {
   border-color: #00ffb2;
-  box-shadow: 0 8px 24px rgba(0, 255, 178, 0.65), 0 0 20px rgba(0, 255, 178, 0.50);
-  transform: scale(1.12);
+  box-shadow: 0 12px 35px rgba(0, 255, 178, 0.65), 0 0 22px rgba(0, 255, 178, 0.50);
+  transform: scale(1.10);
   filter: brightness(1.15) !important;
 }
 
@@ -348,10 +352,10 @@ html, body {
     bottom: 5rem;
   }
   .memory-photo-card {
-    top: -21px;
-    left: -30px;
-    width: 60px;
-    height: 42px;
+    top: -24px;
+    left: -34px;
+    width: 68px;
+    height: 48px;
   }
   .memory-card-inner {
     border-radius: 6px;

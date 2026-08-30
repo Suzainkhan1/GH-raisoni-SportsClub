@@ -1,13 +1,16 @@
 /* ============================================================================
    GHRSTU SPORTS CLUB — 3D MEMORY GLOBE GALLERY ENGINE
    
-   ARCHITECTURE:
-   - Fibonacci sphere distributes N cards uniformly on a sphere of radius R
-   - Each card is translated to its (x,y,z) on the sphere surface
-   - Each card is rotated to face outward using the spherical surface normal
-   - The entire world container rotates as one rigid body
-   - CSS perspective on the viewport provides natural 3D depth
-   - z-index + opacity layering reinforces front/back depth cues
+   Architecture matching exact visual target:
+   - 5 Structured Latitude Rings (3 + 6 + 8 + 6 + 3 = 26 photo slots)
+   - Outward-facing surface-normal orientation per ring
+   - 2-layer card structure (.memory-photo-card -> .memory-card-inner):
+     * Parent holds immutable 3D coordinates on sphere
+     * Child handles borders, rounded corners, glow, and hover scale
+     * Hover NEVER mutates parent 3D transform (0 position jumping)
+   - backface-visibility: hidden on cards for clean front hemisphere silhouette
+   - Smooth inertia drag & auto-cruise physics
+   - First-click instant zoom modal inspection
    ============================================================================ */
 
 class ContainedMemoryGlobeGallery {
@@ -22,10 +25,11 @@ class ContainedMemoryGlobeGallery {
     this.photos = typeof GALLERY_PHOTOS !== 'undefined' ? GALLERY_PHOTOS : [];
     this.totalPhotos = this.photos.length;
 
+    // 26 Spaced Spherical Slots
     this.slots = [];
     this.slotElements = [];
 
-    // Rotation state
+    // Physics & Rotation state
     this.rotX = -0.08;
     this.rotY = 0.0;
     this.vx = 0.0;
@@ -41,6 +45,7 @@ class ContainedMemoryGlobeGallery {
     this.lastPointerY = 0;
     this.dragDistance = 0;
 
+    // Reduced motion preference
     this.reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     this.init();
@@ -107,51 +112,43 @@ class ContainedMemoryGlobeGallery {
     render();
   }
 
-  /**
-   * Fibonacci sphere: distributes N points uniformly on a unit sphere.
-   * 
-   * For each point i:
-   *   y_i = 1 - (2i + 1) / N        (evenly spaced along Y axis)
-   *   r_i = sqrt(1 - y_i^2)          (radius of latitude circle)
-   *   θ_i = golden_angle * i         (longitude, spiraling)
-   *   x_i = cos(θ_i) * r_i
-   *   z_i = sin(θ_i) * r_i
-   * 
-   * Surface normal at point (x,y,z) on unit sphere IS (x,y,z).
-   * Card orientation: rotateY(atan2(x,z)) rotateX(-asin(y))
-   * This makes each card face radially outward from the sphere center.
-   */
   generateSphericalSlots() {
     this.slots = [];
-    const N = this.totalPhotos || 28;
-    const goldenAngle = Math.PI * (1 + Math.sqrt(5));
+    // 5 latitude rings with 28 total slots (1:1 with 28 unique photos):
+    // Top: 3 | Upper: 7 | Equator: 8 | Lower: 7 | Bottom: 3
+    const rings = [
+      { latDeg:  56, count: 3, offsetDeg: 0 },
+      { latDeg:  28, count: 7, offsetDeg: 25.7 },
+      { latDeg:   0, count: 8, offsetDeg: 0 },
+      { latDeg: -28, count: 7, offsetDeg: 25.7 },
+      { latDeg: -56, count: 3, offsetDeg: 0 }
+    ];
 
-    for (let i = 0; i < N; i++) {
-      const y = 1 - ((2 * i + 1) / N);
-      const radiusAtY = Math.sqrt(Math.max(0, 1 - y * y));
-      const theta = goldenAngle * i;
+    let slotIdx = 0;
+    rings.forEach(ring => {
+      const latRad = (ring.latDeg * Math.PI) / 180;
+      const cosLat = Math.cos(latRad);
+      const sinLat = Math.sin(latRad);
 
-      const x = Math.cos(theta) * radiusAtY;
-      const z = Math.sin(theta) * radiusAtY;
+      for (let c = 0; c < ring.count; c++) {
+        const lonDeg = ring.offsetDeg + (360 / ring.count) * c;
+        const lonRad = (lonDeg * Math.PI) / 180;
 
-      // Full surface-normal rotation: card faces outward from sphere center
-      // rotateY: horizontal angle from the Z axis toward X axis
-      // rotateX: vertical tilt from the equatorial plane
-      const faceRotY = Math.atan2(x, z) * (180 / Math.PI);
-      const faceRotX = -Math.asin(Math.max(-1, Math.min(1, y))) * (180 / Math.PI);
-
-      this.slots.push({
-        id: i,
-        // Normalized position on unit sphere
-        nx: x,
-        ny: y,
-        nz: z,
-        // Surface-normal orientation (degrees)
-        faceRotY,
-        faceRotX,
-        photoIndex: i
-      });
-    }
+        this.slots.push({
+          id: slotIdx,
+          latRad,
+          lonRad,
+          cosLat,
+          sinLat,
+          sinLon: Math.sin(lonRad),
+          cosLon: Math.cos(lonRad),
+          rotYDeg: lonDeg,
+          rotXDeg: ring.latDeg,
+          photoIndex: slotIdx % Math.max(1, this.totalPhotos)
+        });
+        slotIdx++;
+      }
+    });
   }
 
   buildDOMSlots() {
@@ -163,58 +160,52 @@ class ContainedMemoryGlobeGallery {
     const vh = window.innerHeight;
     const isMobile = vw <= 768;
 
-    // Calculate available space between header and dock
     const headerH = isMobile ? 56 : 68;
-    const dockH = isMobile ? 80 : 90;
-    const titleH = isMobile ? 60 : 70;
+    const dockH = isMobile ? 65 : 75;
+    const titleH = isMobile ? 55 : 65;
     const availH = Math.max(200, vh - headerH - dockH - titleH);
-    const availW = Math.max(200, vw * 0.88);
-    const fitDim = Math.min(availW, availH);
+    const availW = Math.max(200, vw * 0.90);
+    const charD = Math.min(availW, availH);
 
-    // Sphere radius — sized to fill available space without overflow
-    // Card half-diagonal is ~55px desktop, ~37px mobile, so we need margin
-    const cardMargin = isMobile ? 40 : 58;
-    const maxR = (fitDim / 2) - cardMargin;
-    const R = isMobile
-      ? Math.max(90, Math.min(135, maxR))
-      : Math.max(140, Math.min(200, maxR));
+    const baseR = isMobile
+      ? Math.max(95, Math.min(140, charD * 0.38))
+      : Math.max(130, Math.min(220, charD * 0.38));
 
-    this.currentRadius = R;
+    const Rx = baseR;
+    const Ry = baseR * 1.04;
+    const Rz = baseR;
 
     const fragment = document.createDocumentFragment();
 
     this.slots.forEach((slot, i) => {
-      // Scale unit-sphere position to actual radius
-      const px = R * slot.nx;
-      const py = R * (-slot.ny); // flip Y: screen Y points down
-      const pz = R * slot.nz;
+      const x = Rx * slot.cosLat * slot.sinLon;
+      const y = -Ry * slot.sinLat;
+      const z = Rz * slot.cosLat * slot.cosLon;
 
+      const rotY = slot.rotYDeg;
+      const rotX = slot.rotXDeg;
+
+      // Outer container: purely manages 3D position & orientation on the sphere
       const card = document.createElement('div');
       card.className = 'memory-photo-card';
       card.dataset.slotId = i;
+      card.style.transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, ${z.toFixed(1)}px) rotateY(${rotY.toFixed(1)}deg) rotateX(${rotX.toFixed(1)}deg)`;
 
-      // translate3d places the card center on the sphere surface.
-      // rotateY + rotateX orient the card to face radially outward.
-      // The order matters: translate first (to the sphere surface),
-      // then rotate in-place so the card faces away from center.
-      card.style.transform =
-        `translate3d(${px.toFixed(1)}px, ${py.toFixed(1)}px, ${pz.toFixed(1)}px) ` +
-        `rotateY(${slot.faceRotY.toFixed(1)}deg) ` +
-        `rotateX(${slot.faceRotX.toFixed(1)}deg)`;
-
+      // Inner container: handles rounded corners, border, glow, shadow, and hover zoom
       const inner = document.createElement('div');
       inner.className = 'memory-card-inner';
 
       const photo = this.photos[slot.photoIndex] || { thumb: '', full: '' };
+
       const img = document.createElement('img');
       img.src = photo.thumb;
       img.alt = `Sports Memory ${i + 1}`;
-      img.loading = 'eager';
+      img.loading = i < 12 ? 'eager' : 'lazy';
 
       inner.appendChild(img);
       card.appendChild(inner);
       fragment.appendChild(card);
-      this.slotElements.push({ card, inner, img, slot, px, py, pz });
+      this.slotElements.push({ card, inner, img, slot, x, y, z });
     });
 
     this.world.appendChild(fragment);
@@ -242,15 +233,17 @@ class ContainedMemoryGlobeGallery {
       const dx = clientX - this.lastPointerX;
       const dy = clientY - this.lastPointerY;
       this.dragDistance += Math.abs(dx) + Math.abs(dy);
+
       if (this.dragDistance > 5) this.isDragging = true;
 
       if (this.isDragging) {
-        const sensitivity = 0.004;
+        const sensitivity = 0.0036;
         this.rotY += dx * sensitivity;
         this.rotX -= dy * sensitivity;
         this.rotX = Math.max(-0.6, Math.min(0.6, this.rotX));
-        this.vy = Math.max(-this.maxSpeed, Math.min(this.maxSpeed, dx * 0.003));
-        this.vx = Math.max(-this.maxSpeed, Math.min(this.maxSpeed, -dy * 0.003));
+        this.vy = Math.max(-this.maxSpeed, Math.min(this.maxSpeed, dx * 0.0026));
+        this.vx = Math.max(-this.maxSpeed, Math.min(this.maxSpeed, -dy * 0.0026));
+
         this.updateWorldTransform();
       }
 
@@ -270,6 +263,7 @@ class ContainedMemoryGlobeGallery {
     window.addEventListener('touchmove', onMove, { passive: true });
     window.addEventListener('touchend', onUp);
 
+    // Hover detection: pause auto cruise when user inspects a card
     if (this.world) {
       this.world.addEventListener('pointerenter', (e) => {
         if (e.target.closest('.memory-photo-card')) this.isHoveringCard = true;
@@ -279,8 +273,9 @@ class ContainedMemoryGlobeGallery {
       }, true);
     }
 
+    // Instant first-click to open focus modal
     this.world.addEventListener('click', (e) => {
-      if (this.dragDistance > 6) return;
+      if (this.dragDistance > 8) return;
       const card = e.target.closest('.memory-photo-card');
       if (card) {
         const slotId = parseInt(card.dataset.slotId, 10);
@@ -307,46 +302,9 @@ class ContainedMemoryGlobeGallery {
     window.addEventListener('resize', () => { this.buildDOMSlots(); });
   }
 
-  /**
-   * Apply the globe rotation to the world container.
-   * Then update z-index and opacity for each card based on its
-   * camera-space depth after rotation.
-   */
   updateWorldTransform() {
-    if (!this.world) return;
-    this.world.style.transform =
-      `rotateX(${this.rotX.toFixed(4)}rad) rotateY(${this.rotY.toFixed(4)}rad)`;
-
-    // Compute each card's depth in camera space after world rotation
-    const cosRY = Math.cos(this.rotY);
-    const sinRY = Math.sin(this.rotY);
-    const cosRX = Math.cos(this.rotX);
-    const sinRX = Math.sin(this.rotX);
-
-    for (let i = 0; i < this.slotElements.length; i++) {
-      const el = this.slotElements[i];
-
-      // Apply rotateY then rotateX to the card's local position
-      // to find where it ends up in camera space
-      const afterY_x = el.px * cosRY + el.pz * sinRY;
-      const afterY_z = -el.px * sinRY + el.pz * cosRY;
-      const afterX_z = -el.py * sinRX + afterY_z * cosRX;
-
-      // afterX_z > 0 means the card is in front of the sphere center (toward viewer)
-      const depthRatio = afterX_z / (this.currentRadius || 180);
-
-      if (depthRatio > 0) {
-        // Front hemisphere
-        el.card.style.zIndex = Math.round(50 + depthRatio * 50);
-        el.inner.style.opacity = '1';
-        el.inner.style.filter = `brightness(${(1 + depthRatio * 0.1).toFixed(2)})`;
-      } else {
-        // Back hemisphere — still visible but subdued
-        el.card.style.zIndex = Math.round(10 + (1 + depthRatio) * 20);
-        const backOpacity = Math.max(0.45, 0.7 + depthRatio * 0.25);
-        el.inner.style.opacity = backOpacity.toFixed(2);
-        el.inner.style.filter = `brightness(${(0.7 + (1 + depthRatio) * 0.15).toFixed(2)}) saturate(0.9)`;
-      }
+    if (this.world) {
+      this.world.style.transform = `rotateX(${this.rotX.toFixed(4)}rad) rotateY(${this.rotY.toFixed(4)}rad)`;
     }
   }
 
@@ -356,7 +314,7 @@ class ContainedMemoryGlobeGallery {
     this.focusImg.src = photo.full;
     this.overlay.classList.add('active');
     if (this.world) {
-      this.world.style.opacity = '0.25';
+      this.world.style.opacity = '0.28';
       this.world.style.filter = 'blur(4px)';
     }
   }
@@ -389,6 +347,7 @@ class ContainedMemoryGlobeGallery {
           this.rotY += this.vy;
           this.rotX += this.vx;
           this.rotX = Math.max(-0.6, Math.min(0.6, this.rotX));
+
           this.updateWorldTransform();
         }
       }
